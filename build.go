@@ -310,14 +310,9 @@ func (doc *Document) appendNotes() {
 	doc.pdf.SetY(currentY)
 }
 
-func (doc *Document) appendTotal() {
-	ac := accounting.Accounting{
-		Symbol:    encodeString(doc.Options.CurrencySymbol),
-		Precision: doc.Options.CurrencyPrecision,
-		Thousand:  doc.Options.CurrencyThousand,
-		Decimal:   doc.Options.CurrencyDecimal,
-	}
-
+// Total returns the final amounts
+// Return values are (totalBeforeDiscount, totalWithDiscount, totalTax, totalWithTax)
+func (doc *Document) Total() (decimal.Decimal, decimal.Decimal, decimal.Decimal, decimal.Decimal) {
 	// Get total (without tax)
 	total, _ := decimal.NewFromString("0")
 
@@ -379,6 +374,19 @@ func (doc *Document) appendTotal() {
 	if doc.Discount != nil {
 		totalWithTax = totalWithDiscount.Add(totalTax)
 	}
+
+	return total, totalWithDiscount, totalTax, totalWithTax
+}
+
+func (doc *Document) appendTotal() {
+	ac := accounting.Accounting{
+		Symbol:    encodeString(doc.Options.CurrencySymbol),
+		Precision: doc.Options.CurrencyPrecision,
+		Thousand:  doc.Options.CurrencyThousand,
+		Decimal:   doc.Options.CurrencyDecimal,
+	}
+
+	total, totalWithDiscount, totalTax, totalWithTax := doc.Total()
 
 	doc.pdf.SetY(doc.pdf.GetY() + 10)
 	doc.pdf.SetFont("Helvetica", "", LargeTextFontSize)
