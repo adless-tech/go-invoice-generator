@@ -66,7 +66,7 @@ func (c *Contact) appendContactTODoc(
 
 	// Set name
 	doc.pdf.SetFont("Helvetica", "B", 10)
-	doc.pdf.Cell(40, 8, c.Name)
+	doc.pdf.Cell(40, 8, encodeString(c.Name))
 	doc.pdf.SetFont("Helvetica", "", 10)
 
 	if c.Address != nil {
@@ -86,7 +86,7 @@ func (c *Contact) appendContactTODoc(
 		// Set address
 		doc.pdf.SetFont("Helvetica", "", 10)
 		doc.pdf.SetXY(x, doc.pdf.GetY()+10)
-		doc.pdf.MultiCell(70, 5, c.Address.ToString(), "0", "L", false)
+		doc.pdf.MultiCell(70, 5, encodeString(c.Address.ToString()), "0", "L", false)
 	}
 
 	return doc.pdf.GetY()
